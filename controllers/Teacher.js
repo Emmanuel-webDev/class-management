@@ -1,12 +1,16 @@
+const express = require('express')
 const user = require('../Model/auth')
 const marks =require('../Model/marks')
 const message = require('../Model/notice')
 const student = require('../Model/studentAuth')
-
 const bcrypt = require('bcryptjs')
+const cookie = require('cookie-parser')
 const jwt = require('jsonwebtoken')
+const route = express.Router()
 
-async function signup(req, res){
+route.use(cookie())
+
+route.post('/', async (req, res)=>{
    const {name, email, classOf, password} = req.body
    
    if(!(name && email && classOf && password)){
@@ -22,6 +26,12 @@ async function signup(req, res){
     return
    }
 
+   const classOccupied = await user.findOne({classOf: req.body.classOf})
+   if(classOccupied){
+    res.send("Class already registered with a teacher")
+    return;
+   }
+
    const newUser = new user({
     name: req.body.name,
     email: req.body.email,
@@ -32,10 +42,9 @@ async function signup(req, res){
    await newUser.save()
    res.send(newUser)
 
-}
+})
 
-//login
-async function login(req, res){
+route.post('/login', async (req, res)=>{
    const email = req.body.email
    const password = req.body.password
 
@@ -48,22 +57,28 @@ async function login(req, res){
     return
    }
 
+   console.log(existingUser.classOf)
+
    //authenticating users
-   const token = jwt.sign({id:existingUser._id, email:existingUser.email}, process.env.JWT_SECRET, {expiresIn: '24h'})
+   const token = jwt.sign({id:existingUser._id, classOf:existingUser.classOf}, process.env.JWT_SECRET, {expiresIn: '3d'})
    
    if(!token){
     return res.send('Token not registered')
    }
 
-   res.cookie("e_token", token, {
+    return res.cookie("access_token", token, {
     httpOnly: true,
     secure: false
    }).send({data:'Login success',  token})
-}
-//token verification
-function verify(req, res, next){
-    const token = req.cookies.e_token
+})
+
+const verification = async (req, res, next)=>{
+    const token = req.cookies.access_token
+    if(!token){
+        return res.status(403).send('unauthorized activity ');
+    }
     const verify  = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await user.findById(verify.id)
 
     if(!verify){
         return res.send("User not verified")
@@ -72,15 +87,25 @@ function verify(req, res, next){
     next()
 }
 
-//create Marks
-async function createMarks(req, res){
+route.post('/createMarks', async(req, res)=>{
     const studentMarks = new marks(req.body)
     await studentMarks.save();
     res.send(studentMarks)
-}
+})
 
-//update Marks
-async function updateMark(req, res){
+
+route.post('/notice', verification, async(req, res)=>{
+    const messages = new message({
+     title:req.body.title,
+     message: req.body.message,
+     date_Created: new Date(),
+     classOf: req.user
+ })
+    await messages.save();
+    res.send(messages)
+ })
+
+route.post('/updateMark/:id', async(req, res)=>{
     const edit = await marks.findByIdAndUpdate({_id:req.params.id}, {
         name: req.body.name,
         subject: req.body.subject,
@@ -89,50 +114,47 @@ async function updateMark(req, res){
         markType: req.body.markType,
     })
     res.send(edit);
-}
+})
 
-//deleting Marks
-async function del(req, res){
+route.post('/del/:id', async (req, res)=>{
     const terminate = await marks.findByIdAndRemove({_id:req.params.id})
     res.send("Mark deleted")
-}
-
-//create notice
-async function notice(req, res){
-   const messages = new message({
-    title:req.body.title,
-    message: req.body.message,
-    date_Created: new Date()
-    //classOf: req.body.classOf
 })
-   await messages.save();
-   res.send(messages)
-}
 
-//Add students
-async function addStudent(req, res){
-    const {name, email, student_id, classOf} = req.body
+route.post('/newStudent',verification, async (req, res)=>{
+    const {name, email, student_id, classOfStudent} = req.body
     const hashed = await bcrypt.hash(student_id, 12)
     req.body.student_id = hashed
     
+//get teachers class from the verification
+const teacherClass = req.user.classOf
+
     const signstudent = new student({
         name: req.body.name,
         email: req.body.email,
         student_id: req.body.student_id,
-        classOf: req.body.classOf
+        classOfStudent:req.body.classOfStudent
     })
+
+    //teachers cant create class for other student
+    if(teacherClass !== signstudent.classOfStudent){
+        return res.send('cant create student for other class')
+    }
+
+    //unique students
+    const studentexist = await student.findOne({name:name})
+    if(studentexist){
+        return res.send('Student already exists')
+    }
+
     await signstudent.save()
     res.send(signstudent)
-}
+})
 
 
-module.exports={
-    signup: signup,
-    login:login,
-    createMarks: createMarks,
-    notice: notice,
-    updateMark:updateMark,
-    del: del,
-    addStudent: addStudent,
-    verify: verify
-}
+module.exports= route
+
+
+
+
+

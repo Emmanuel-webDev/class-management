@@ -24,11 +24,9 @@ async function login(req, res){
 
 //notice
 async function notice(req, res){
-    const search = await student.findOne({name: req.body.name})
-    req.user = search.classOf
-    console.log(req.user)
-
- const getMessage = await message.aggregate([{$match:{classOf:req.user}}]).sort({date_created: -1})
+    const studentClass = await student.find()
+    
+ const getMessage = await message.aggregate([{$match:{}}]).sort({date_created: -1})
  if(getMessage===0 || getMessage.length=== 0){
     res.send('no notice')
     return;
@@ -38,8 +36,8 @@ async function notice(req, res){
 
 //getmarks
 async function getMarks(req, res){
-const teacher = await student.findOne({name: req.body.name})
-req.user = teacher.classOf
+const studentClass = await student.findOne({name: req.body.name})
+req.user = studentClass.classOf
 console.log(req.user)
 
 const result = await marks.aggregate([{

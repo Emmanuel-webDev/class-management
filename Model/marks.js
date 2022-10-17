@@ -23,8 +23,7 @@ const markSchema = mongoose.Schema({
         required: true
     },
     classOf:{
-        type:String,
-        ref:'auth'
+        type:String
     }
 });
 
