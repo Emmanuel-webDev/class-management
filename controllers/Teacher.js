@@ -99,8 +99,9 @@ route.post('/notice', verification, async(req, res)=>{
      title:req.body.title,
      message: req.body.message,
      date_Created: new Date(),
-     classOf: req.user
+     classOfteacher: req.user.classOf
  })
+ console.log(messages.classOfteacher)
     await messages.save();
     res.send(messages)
  })
@@ -125,7 +126,7 @@ route.post('/newStudent',verification, async (req, res)=>{
     const {name, email, student_id, classOfStudent} = req.body
     const hashed = await bcrypt.hash(student_id, 12)
     req.body.student_id = hashed
-    
+
 //get teachers class from the verification
 const teacherClass = req.user.classOf
 

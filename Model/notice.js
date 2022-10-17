@@ -10,7 +10,7 @@ const noticeSchema = mongoose.Schema({
     },
 
     date_Created:Date,
-classOf:{
+classOfteacher:{
   type:String,
   ref: 'auth'
 }
