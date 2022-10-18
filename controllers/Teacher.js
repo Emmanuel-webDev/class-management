@@ -87,8 +87,15 @@ const verification = async (req, res, next)=>{
     next()
 }
 
-route.post('/createMarks', async(req, res)=>{
-    const studentMarks = new marks(req.body)
+route.post('/createMarks', verification, async(req, res)=>{
+    const studentMarks = new marks({
+        name: req.body.name,
+        subject: req.body.subject,
+        score: req.body.score,
+        semester: req.body.semester,
+        markType: req.body.markType,
+        classOfteacher: req.user.classOf
+    })
     await studentMarks.save();
     res.send(studentMarks)
 })

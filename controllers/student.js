@@ -59,13 +59,9 @@ route.get('/notices', authorization, async(req, res)=>{
 })
 
 
-route.get('/studentMarks', async (req, res)=>{
-const studentClass = await student.findOne({name: req.body.name})
-req.user = studentClass.classOf
-console.log(req.user)
-
+route.get('/studentMarks', authorization, async (req, res)=>{
 const result = await marks.aggregate([{
-    $match:{classOf:req.user, name:req.body.name}
+    $match:{classOfteacher:req.user.classOfStudent, name:req.user.name}
 }])
 
 if(result.length === 0){

@@ -22,8 +22,9 @@ const markSchema = mongoose.Schema({
         enum: ["Test", "Examination"],
         required: true
     },
-    classOf:{
-        type:String
+    classOfteacher:{
+        type:String,
+        ref:"auth"
     }
 });
 
