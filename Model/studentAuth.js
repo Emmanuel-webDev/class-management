@@ -8,7 +8,7 @@ const schema = mongoose.Schema({
         required: true
     },
     classOfStudent: String,
-
+    courses:[{type: String}]
 })
 
 module.exports = mongoose.model('studentAuth', schema)

@@ -72,13 +72,6 @@ if(result.length === 0){
 res.send(result);
 
 })
-//login student
-
-
-//notice
-
-
-//getmarks
 
 
 

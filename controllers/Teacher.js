@@ -113,6 +113,21 @@ route.post('/notice', verification, async(req, res)=>{
     res.send(messages)
  })
 
+ route.post('updateMessage/:id', verification, async(req,res)=>{
+    const update = await message.findByIdAndUpdate({_id: req.params.id}, {
+        title: req.body.title,
+        message: req.body.message,
+        date_Created: new Date(),
+        classOfteacher: req.user.classOf
+    })
+
+    res.send(update);
+ })
+
+ route.post('delMessage/:id', verification, async(req, res)=>{
+    const remove = await message.findByIdAndRemove({_id: req.params.id})
+ })
+
 route.post('/updateMark/:id', async(req, res)=>{
     const edit = await marks.findByIdAndUpdate({_id:req.params.id}, {
         name: req.body.name,
@@ -130,7 +145,7 @@ route.post('/del/:id', async (req, res)=>{
 })
 
 route.post('/newStudent',verification, async (req, res)=>{
-    const {name, email, student_id, classOfStudent} = req.body
+    const {name, email, student_id, classOfStudent, courses} = req.body
     const hashed = await bcrypt.hash(student_id, 12)
     req.body.student_id = hashed
 
@@ -141,8 +156,10 @@ const teacherClass = req.user.classOf
         name: req.body.name,
         email: req.body.email,
         student_id: req.body.student_id,
+        courses: req.body.courses,
         classOfStudent:req.body.classOfStudent
     })
+
 
     //teachers cant create class for other student
     if(teacherClass !== signstudent.classOfStudent){
@@ -157,6 +174,10 @@ const teacherClass = req.user.classOf
 
     await signstudent.save()
     res.send(signstudent)
+})
+
+route.post('Logout', verification, async(req, res)=>{
+    return res.clearCookie('access_token').send("Logged out")
 })
 
 
