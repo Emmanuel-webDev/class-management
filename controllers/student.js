@@ -65,7 +65,7 @@ const result = await marks.aggregate([{
 }])
 
 if(result.length === 0){
-    res.send('no marks')
+    res.send('No marks for you')
     return
 }
 

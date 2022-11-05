@@ -128,7 +128,7 @@ route.post('/notice', verification, async(req, res)=>{
     const remove = await message.findByIdAndRemove({_id: req.params.id})
  })
 
-route.post('/updateMark/:id', async(req, res)=>{
+route.post('/updateMark/:id', verification, async(req, res)=>{
     const edit = await marks.findByIdAndUpdate({_id:req.params.id}, {
         name: req.body.name,
         subject: req.body.subject,
@@ -139,7 +139,7 @@ route.post('/updateMark/:id', async(req, res)=>{
     res.send(edit);
 })
 
-route.post('/del/:id', async (req, res)=>{
+route.post('/delMark/:id', verification,  async(req, res)=>{
     const terminate = await marks.findByIdAndRemove({_id:req.params.id})
     res.send("Mark deleted")
 })
@@ -176,7 +176,19 @@ const teacherClass = req.user.classOf
     res.send(signstudent)
 })
 
-route.post('Logout', verification, async(req, res)=>{
+route.get('/Students', verification, async(req, res)=>{
+    const allStudent = await student.aggregate([{
+        $match:{classOfStudent: req.user.classOf}
+    }])
+
+    if(allStudent.length === 0){
+        res.send('Students not registered')
+    }
+
+    res.status(200).send(allStudent)
+})
+
+route.post('/Logout', verification, async(req, res)=>{
     return res.clearCookie('access_token').send("Logged out")
 })
 
