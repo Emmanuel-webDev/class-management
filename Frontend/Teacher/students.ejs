@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Student</title>
+</head>
+<body>
+    <h1>All Students</h1>
+    <main>
+
+
+<% if(students.length === 0){ %>
+    <h1>No students yet!!</h1>
+    <p>You can start by creating one <a href="/createStudent">here</a></p>
+
+    <% } %>
+
+    <ul>
+          <%  for(const student of students){ %>
+            <li>
+              <h2><%= student.name %></h2>
+              <p><%= student.email %></p>
+              <p><%= student.classOfStudent %></p>
+            </li>
+
+       <% } %>
+    </ul>
+
+    
+    </main>
+</body>
+</html>

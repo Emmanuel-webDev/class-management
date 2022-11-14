@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+</head>
+<body>
+    <main>
+        <h1> Teachers Account </h1>
+        
+  
+        <form action="/" method="POST">  
+          <p>
+              <label for="name">Full Name</label>
+              <input type="text" name="name" id="name"  required>
+          </p>  
+
+          <p>
+              <label for="mail">E-mail</label>
+              <input type="email" name="email" id="mail"   required>
+          </p>
+
+          <p>
+            <label for="classOf">Teachers Class</label>
+            <input type="text" name="classOf" id="classOf" required>
+          </p>
+
+          <p>
+            <label for="isteacher">Teacher</label>
+            <input type="checkbox" name="isTeacher" id="isteacher">
+          </p>
+          
+          <p>
+              <label for="pass">Password</label>
+              <input type="password" name="password" id="pass"  required minlength="6">
+          </p>
+          
+  
+          <button class="btn">Create Teachers Account</button>
+          <p><a href="/signin">or Login instead</a></p>
+  
+        </form>
+  
+     </main>
+</body>
+</html>

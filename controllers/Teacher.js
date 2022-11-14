@@ -10,6 +10,10 @@ const route = express.Router()
 
 route.use(cookie())
 
+route.get('/', (req, res)=>{
+    res.render('./Teacher/signup');
+})
+
 route.post('/', async (req, res)=>{
    const {name, email, classOf, password} = req.body
    
@@ -26,22 +30,27 @@ route.post('/', async (req, res)=>{
     return
    }
 
-   const classOccupied = await user.findOne({classOf: req.body.classOf})
-   if(classOccupied){
-    res.send("Class already registered with a teacher")
-    return;
-   }
+   //const classOccupied = await user.findOne({classOf: req.body.classOf})
+   //if(classOccupied){
+    //res.send("Class already registered with a teacher")
+    //return;
+   //}
 
    const newUser = new user({
     name: req.body.name,
     email: req.body.email,
     classOf: req.body.classOf,
+    isTeacher: req.body.isTeacher,
     password: req.body.password
    })
    
    await newUser.save()
-   res.send(newUser)
+   res.redirect('/signin')
 
+})
+
+route.get('/signin', (req, res)=>{
+    res.render('./Teacher/login')
 })
 
 route.post('/login', async (req, res)=>{
@@ -66,11 +75,17 @@ route.post('/login', async (req, res)=>{
     return res.send('Token not registered')
    }
 
-    return res.cookie("access_token", token, {
+   if(existingUser.isTeacher === 'on'){
+     return res.cookie("access_token", token, {
     httpOnly: true,
     secure: false
-   }).send({data:'Login success',  token})
+   }).redirect('/dashboard')
+   }
+
+   return res.redirect('/');
+   
 })
+
 
 const verification = async (req, res, next)=>{
     const token = req.cookies.access_token
@@ -87,6 +102,15 @@ const verification = async (req, res, next)=>{
     next()
 }
 
+route.get('/dashboard', verification, async(req, res)=>{
+  const profile = await user.findOne({_id: req.user})
+  res.render('./Teacher/dashboard', {profiles : profile})
+})
+
+route.get('/createMark', verification, (req, res)=>{
+    res.render('./Teacher/Createmark')
+})
+
 route.post('/createMarks', verification, async(req, res)=>{
     const studentMarks = new marks({
         name: req.body.name,
@@ -94,10 +118,18 @@ route.post('/createMarks', verification, async(req, res)=>{
         score: req.body.score,
         semester: req.body.semester,
         markType: req.body.markType,
+        classTeacherID: req.user._id,
         classOfteacher: req.user.classOf
     })
     await studentMarks.save();
-    res.send(studentMarks)
+    res.redirect('/marks')
+})
+
+route.get('/marks', verification, async(req, res)=>{
+    const getMark = await marks.aggregate([{
+        $match:{classTeacherID: req.user._id}
+    }])
+    res.render('./Teacher/Marks', {getMarks: getMark})
 })
 
 
@@ -108,7 +140,6 @@ route.post('/notice', verification, async(req, res)=>{
      date_Created: new Date(),
      classOfteacher: req.user.classOf
  })
- console.log(messages.classOfteacher)
     await messages.save();
     res.send(messages)
  })
@@ -128,6 +159,10 @@ route.post('/notice', verification, async(req, res)=>{
     const remove = await message.findByIdAndRemove({_id: req.params.id})
  })
 
+ route.get('/update/:id', verification, (req, res)=>{
+    res.render('./Teacher/update')
+ })
+
 route.post('/updateMark/:id', verification, async(req, res)=>{
     const edit = await marks.findByIdAndUpdate({_id:req.params.id}, {
         name: req.body.name,
@@ -142,6 +177,10 @@ route.post('/updateMark/:id', verification, async(req, res)=>{
 route.post('/delMark/:id', verification,  async(req, res)=>{
     const terminate = await marks.findByIdAndRemove({_id:req.params.id})
     res.send("Mark deleted")
+})
+
+route.get('/createStudent', verification, (req, res)=>{
+    res.render('./Teacher/newStudent')
 })
 
 route.post('/newStudent',verification, async (req, res)=>{
@@ -173,7 +212,7 @@ const teacherClass = req.user.classOf
     }
 
     await signstudent.save()
-    res.send(signstudent)
+    res.redirect('/Students')
 })
 
 route.get('/Students', verification, async(req, res)=>{
@@ -185,11 +224,11 @@ route.get('/Students', verification, async(req, res)=>{
         res.send('Students not registered')
     }
 
-    res.status(200).send(allStudent)
+    res.status(200).render('./Teacher/students', {students: allStudent})
 })
 
-route.post('/Logout', verification, async(req, res)=>{
-    return res.clearCookie('access_token').send("Logged out")
+route.post('/logout', verification, async(req, res)=>{
+    return res.clearCookie('access_token').redirect('/')
 })
 
 

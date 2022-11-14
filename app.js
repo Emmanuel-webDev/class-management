@@ -13,12 +13,14 @@ require('dotenv').config()
 
 mongoose.connect('mongodb://127.0.0.1:27017/class-system', {UseNewUrlParser: true}).then(()=>{
 //middleware
-
+app.set("views", "Frontend")
+app.set('view engine', 'ejs')
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.use(user)
 app.use(student)
    
+
 
 
 app.listen(process.env.PORT, ()=>{

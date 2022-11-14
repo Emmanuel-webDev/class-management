@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+<body>
+    <main>
+<header>
+        <a href="/createStudent">New Student</a>
+         <a href="#">Create Message</a>
+         <a href="/createMark">Create Mark</a>
+         <a href="/marks">Student Marks</a>
+         <a href="/Students">All Student</a>
+         <form action="/logout" method="POST">
+            <button>Logout</button>
+         </form>
+</header>
+        <h2>Welcome Mr/Mrs <%= profiles.name %></h2>
+        <p><%= profiles.classOf %></p>
+    </main>
+</body>
+</html>

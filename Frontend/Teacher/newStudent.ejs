@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Student</title>
+</head>
+<body>
+    <main>
+        <h1>Create Student Profile</h1>
+        
+  
+        <form action="/newStudent" method="POST">  
+
+            <p>
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name"   required>
+            </p>
+
+          <p>
+              <label for="mail">E-mail</label>
+              <input type="email" name="email" id="mail"   required>
+          </p>
+
+          <p>
+            <label for="class">Class</label>
+            <input type="text" name="classOfStudent" id="class"   required>
+        </p>
+
+        <p>
+            <label for="course">Subjects</label>
+            <input type="text" name="courses" id="courses"   required>
+        </p>
+          
+          <p>
+              <label for="pass">Student_ID</label>
+              <input type="password" name="student_id" id="pass"  required minlength="6">
+          </p>
+          
+  
+          <button class="btn">Add student</button>
+  
+        </form>
+  
+     </main>
+</body>
+</html>
