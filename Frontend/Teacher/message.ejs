@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Message</title>
+</head>
+<body>
+    <form action="/notice" method="POST">
+        <p>
+            <label for="title">Message Title</label>
+            <input type="text" name="title" id="title" required>
+        </p>
+
+        <p>
+            <label for="mess">Body</label>
+            <textarea name="message" id="mess" cols="30" rows="10" required></textarea>
+        </p>
+
+        <button>Send Message</button>
+    </form>
+</body>
+</html>

@@ -9,6 +9,9 @@ const route = express.Router()
 
 route.use(cookie())
 
+route.get('/logon', (req, res)=>{
+    res.render('./Student/login');
+})
 
 route.post('/studentLogin', async (req, res)=>{
     const {name, student_id} = req.body
@@ -28,7 +31,7 @@ route.post('/studentLogin', async (req, res)=>{
     return res.cookie("e_token", signUser, {
         httpOnly: true,
         secure:false
-    }).send('Student Login success')
+    }).redirect('/dashboard')
 })
 
 const authorization = async function(req, res, next){
@@ -47,15 +50,15 @@ const authorization = async function(req, res, next){
     next();
 }
 
+route.get('/dashboard', authorization, async(req, res)=>{
+    const profile = await student.findOne({_id: req.user})
+    res.render('./student/Dashboard', {student: profile})
+})
+
 route.get('/notices', authorization, async(req, res)=>{
     const studentClass = req.user.classOfStudent
-    
  const getMessage = await message.aggregate([{$match:{classOf: studentClass}}]).sort({date_created: -1})
- if(getMessage===0 || getMessage.length=== 0){
-    res.send('no notice')
-    return;
- }
- res.send(getMessage);
+ res.render('./Student/Messages', {getMessage: getMessage})
 })
 
 
@@ -64,12 +67,8 @@ const result = await marks.aggregate([{
     $match:{classOfteacher:req.user.classOfStudent, name:req.user.name}
 }])
 
-if(result.length === 0){
-    res.send('No marks for you')
-    return
-}
 
-res.send(result);
+res.render('./Student/Marks', {result: result})
 
 })
 

@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students Mark</title>
+    <title>Grades</title>
 </head>
 <body>
-    <% if(getMarks.length === 0){ %>
-        <h1>No Marks for students yet!!</h1>
-        <p>You can start by creating one <a href="/createMark">here</a></p>
+    <main>
+     
+    <% if(result.length === 0){ %>
+        <h1>No Marks for student!!</h1>
     
         <% } %>
     
         <ul>
-              <%  for(const x of getMarks){ %>
+              <%  for(const x of result){ %>
                 <li>
                   <h2><%= x.name %></h2>
                   <p><%= x.subject %></p>
@@ -22,12 +23,9 @@
                   <p><%= x.score %></p>
                   <p><%= x.semester %></p>
                 </li>
-                <a href="/update/<%= x._id %>">Update Mark</a>
-                <form action="/delMark/<%= x._id %>" method="POST">
-                  <button>Delete</button>
-                </form>
     
            <% } %>
         </ul>
+    </main>
 </body>
 </html>

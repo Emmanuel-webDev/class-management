@@ -7,33 +7,33 @@
     <title>Marks</title>
 </head>
 <body>
-    <form action="/createMarks" method="POST">
+    <form action="/updateMark/<%= score._id %>" method="POST">
 <p>
     <label for="name">Student Name</label>
-    <input type="text" name="name" id="name">
+    <input type="text" name="name" id="name" value="<%= score.name %>">
 </p>
 
 <p>
     <label for="sub">Subject</label>
-    <input type="text" name="subject" id="sub">
+    <input type="text" name="subject" id="sub" value="<%= score.subject %>">
 </p>
 
 <p>
     <label for="score">Score</label>
-    <input type="number" name="score" id="score">
+    <input type="number" name="score" id="score" value="<%= score.score %>">
 </p>
 
 <p>
     <label for="sem">Semester</label>
-    <input type="text" name="semester" id="sem">
+    <input type="text" name="semester" id="sem" value="<%= score.semester %>">
 </p>
 
 <p>
     <label for="type">Mark Type</label>
-    <input type="text" name="markType" id="type" placeholder="Either Test or Examination">
+    <input type="text" name="markType" id="type" placeholder="Either Test or Examination" value="<%=score.markType%>">
 </p>
 
-<button>Create</button>
+<button>Update</button>
 
     </form>
 </body>

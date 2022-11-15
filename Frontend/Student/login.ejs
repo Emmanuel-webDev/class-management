@@ -9,11 +9,10 @@
 </head>
 <body>
     <main>
-        <h1> Login to account </h1>
-        <a href="/logon">Login as Student</a>
+        <h1> Login to student account </h1>
         
   
-        <form action="/login" method="POST">  
+        <form action="/studentLogin" method="POST">  
 
           <p>
               <label for="mail">E-mail</label>
@@ -21,13 +20,12 @@
           </p>
           
           <p>
-              <label for="pass">Password</label>
-              <input type="password" name="password" id="pass"  required minlength="6">
+              <label for="pass">Student_ID</label>
+              <input type="password" name="student_id" id="pass"  required minlength="6">
           </p>
           
   
           <button class="btn">Login</button>
-          <p><a href="/">or SignUp instead</a></p>
   
         </form>
   

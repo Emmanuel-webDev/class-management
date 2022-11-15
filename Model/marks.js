@@ -15,6 +15,7 @@ const markSchema = mongoose.Schema({
     },
     semester: {
         type: String,
+        enum:["1st", "2nd", "3rd"],
         required: true
     },
     markType:{

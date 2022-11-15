@@ -66,7 +66,6 @@ route.post('/login', async (req, res)=>{
     return
    }
 
-   console.log(existingUser.classOf)
 
    //authenticating users
    const token = jwt.sign({id:existingUser._id, classOf:existingUser.classOf}, process.env.JWT_SECRET, {expiresIn: '3d'})
@@ -132,6 +131,9 @@ route.get('/marks', verification, async(req, res)=>{
     res.render('./Teacher/Marks', {getMarks: getMark})
 })
 
+route.get('/createMessage', verification, (req, res)=>{
+    res.render('./Teacher/message')
+})
 
 route.post('/notice', verification, async(req, res)=>{
     const messages = new message({
@@ -141,10 +143,22 @@ route.post('/notice', verification, async(req, res)=>{
      classOfteacher: req.user.classOf
  })
     await messages.save();
-    res.send(messages)
+    res.redirect('/messages')
  })
 
- route.post('updateMessage/:id', verification, async(req,res)=>{
+ route.get('/messages', verification,  async(req, res)=>{
+      const getMessage = await message.aggregate([{
+        $match: {classOfteacher: req.user.classOf}
+      }]) 
+      res.render('./Teacher/notice', {getMessages: getMessage})
+ })
+
+ route.get('/editMessage/:id', verification, async(req,res)=>{
+    const edit = await message.findById({_id: req.params.id})
+    res.render('./Teacher/updateMessage', {edit : edit})
+ } )
+
+ route.post('/updateMessage/:id', verification, async(req,res)=>{
     const update = await message.findByIdAndUpdate({_id: req.params.id}, {
         title: req.body.title,
         message: req.body.message,
@@ -152,15 +166,17 @@ route.post('/notice', verification, async(req, res)=>{
         classOfteacher: req.user.classOf
     })
 
-    res.send(update);
+    res.redirect('/messages');
  })
 
- route.post('delMessage/:id', verification, async(req, res)=>{
+ route.post('/delete/:id', verification, async(req, res)=>{
     const remove = await message.findByIdAndRemove({_id: req.params.id})
+    res.redirect('/messages')
  })
 
- route.get('/update/:id', verification, (req, res)=>{
-    res.render('./Teacher/update')
+ route.get('/update/:id', verification, async(req, res)=>{
+    const mark = await marks.findOne({_id: req.params.id})
+    res.render('./Teacher/update', {score: mark})
  })
 
 route.post('/updateMark/:id', verification, async(req, res)=>{
@@ -171,12 +187,12 @@ route.post('/updateMark/:id', verification, async(req, res)=>{
         semester: req.body.semester,
         markType: req.body.markType,
     })
-    res.send(edit);
+    res.redirect('/marks');
 })
 
 route.post('/delMark/:id', verification,  async(req, res)=>{
     const terminate = await marks.findByIdAndRemove({_id:req.params.id})
-    res.send("Mark deleted")
+    res.redirect('/marks')
 })
 
 route.get('/createStudent', verification, (req, res)=>{
