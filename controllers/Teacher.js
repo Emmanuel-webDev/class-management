@@ -89,7 +89,7 @@ route.post('/login', async (req, res)=>{
 const verification = async (req, res, next)=>{
     const token = req.cookies.access_token
     if(!token){
-        return res.status(403).send('unauthorized activity ');
+        return res.status(403).send('<h1> Unauthorized Activity </h1>')
     }
     const verify  = jwt.verify(token, process.env.JWT_SECRET);
     req.user = await user.findById(verify.id)
@@ -204,6 +204,8 @@ route.post('/newStudent',verification, async (req, res)=>{
     const hashed = await bcrypt.hash(student_id, 12)
     req.body.student_id = hashed
 
+    const subjects = courses.split(" ")
+    req.body.courses= subjects
 //get teachers class from the verification
 const teacherClass = req.user.classOf
 
@@ -218,13 +220,13 @@ const teacherClass = req.user.classOf
 
     //teachers cant create class for other student
     if(teacherClass !== signstudent.classOfStudent){
-        return res.send('cant create student for other class')
+        return res.render('./ErrorMessages/403')
     }
 
     //unique students
     const studentexist = await student.findOne({name:name})
     if(studentexist){
-        return res.send('Student already exists')
+        return res.render('./ErrorMessage/err')
     }
 
     await signstudent.save()
@@ -244,7 +246,7 @@ route.get('/Students', verification, async(req, res)=>{
 })
 
 route.post('/logout', verification, async(req, res)=>{
-    return res.clearCookie('access_token').redirect('/')
+    return res.clearCookie('access_token').render('./ErrorMessages/exit')
 })
 
 

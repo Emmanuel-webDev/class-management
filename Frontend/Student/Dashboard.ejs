@@ -11,13 +11,17 @@
 <header>
       <a href="/notices">Messages</a>
       <a href="/studentMarks">Your Marks</a>
-         <form action="/logout" method="POST">
+         <form action="/exit" method="POST">
             <button>Logout</button>
          </form>
 </header>
-        <h2>Welcome <%= student.name %></h2>
+        <h2>Welcome, <%= student.name %></h2>
         <p>Email: <%= student.email %></p>
-        <p><%= student.classOfStudent %></p>
+        <p>Class: <%= student.classOfStudent %></p>
+         <h3>Courses</h3>
+        <% for(const x of student.courses){ %>
+                 <li><%= x %></li>
+         <% } %>
     </main>
 </body>
 </html>

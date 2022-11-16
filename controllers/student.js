@@ -31,13 +31,13 @@ route.post('/studentLogin', async (req, res)=>{
     return res.cookie("e_token", signUser, {
         httpOnly: true,
         secure:false
-    }).redirect('/dashboard')
+    }).redirect('/studentDashboard')
 })
 
 const authorization = async function(req, res, next){
     const token = req.cookies.e_token
     if(!token){
-        return res.send('No token found')
+        return res.send('<h1> Unauthorized Activity </h1>')
     }
 
     const verification = jwt.verify(token, process.env.JWT_SECRET)
@@ -50,7 +50,7 @@ const authorization = async function(req, res, next){
     next();
 }
 
-route.get('/dashboard', authorization, async(req, res)=>{
+route.get('/studentDashboard', authorization, async(req, res)=>{
     const profile = await student.findOne({_id: req.user})
     res.render('./student/Dashboard', {student: profile})
 })
@@ -70,6 +70,10 @@ const result = await marks.aggregate([{
 
 res.render('./Student/Marks', {result: result})
 
+})
+
+route.post('/exit', authorization, async(req, res)=>{
+    return res.clearCookie('e_token').render('./ErrorMessages/logout')
 })
 
 
