@@ -7,7 +7,10 @@ const schema = mongoose.Schema({
         type:String,
         required: true
     },
-    classOfStudent: String,
+    classOfStudent: {
+        type: String,
+        enum:["JSS1", "JSS2", "JSS3", "SS1", "SS2", "SS3"]
+    },
     courses:[{type: String}]
 })
 

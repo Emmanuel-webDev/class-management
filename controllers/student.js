@@ -57,7 +57,7 @@ route.get('/studentDashboard', authorization, async(req, res)=>{
 
 route.get('/notices', authorization, async(req, res)=>{
     const studentClass = req.user.classOfStudent
- const getMessage = await message.aggregate([{$match:{classOf: studentClass}}]).sort({date_created: -1})
+ const getMessage = await message.aggregate([{$match:{classOfteacher: studentClass}}]).sort({date_created: -1})
  res.render('./Student/Messages', {getMessage: getMessage})
 })
 

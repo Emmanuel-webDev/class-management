@@ -19,6 +19,9 @@ app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.use(user)
 app.use(student)
+app.use((error, req, res, next)=>{
+    res.render('./ErrorMessages/501')
+})
    
 
 
