@@ -9,7 +9,7 @@ const route = express.Router()
 
 route.use(cookie())
 
-route.get('/logon', (req, res)=>{
+route.get('/studentSignin', (req, res)=>{
     res.render('./Student/login');
 })
 

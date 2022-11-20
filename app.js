@@ -11,7 +11,7 @@ const app = express();
 
 require('dotenv').config()
 
-mongoose.connect('mongodb://127.0.0.1:27017/class-system', {UseNewUrlParser: true}).then(()=>{
+mongoose.connect(process.env.URI, {UseNewUrlParser: true}).then(()=>{
 //middleware
 app.set("views", "Frontend")
 app.set('view engine', 'ejs')

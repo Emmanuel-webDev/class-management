@@ -30,11 +30,11 @@ route.post('/', async (req, res)=>{
     return
    }
 
-   //const classOccupied = await user.findOne({classOf: req.body.classOf})
-   //if(classOccupied){
-    //res.send("Class already registered with a teacher")
-    //return;
-   //}
+   const classOccupied = await user.findOne({classOf: req.body.classOf})
+   if(classOccupied){
+    res.send("Class already registered with a teacher")
+    return;
+   }
 
    const newUser = new user({
     name: req.body.name,
