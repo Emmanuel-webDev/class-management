@@ -37,21 +37,42 @@ app.use((error, req, res, next)=>{
     res.status(500).send("Server broke down..")
 })
    
+let users = []
 
 //socket functionalities
 io.on('connection', (socket)=>{
     console.log(`user ${socket.id} joined`)
 
+    socket.on('usersVal', (data)=>{
+        socket.user = data
+        users.push(data)
+        io.emit('usersData', users)
+    })
+
     socket.on('message', (msg)=>{
         io.emit('message_clients', {
-            message: msg
-        })
+            message: msg,
+            user: socket.user
+        })    
     })
-})
 
-//app.listen(5050, ()=>{
-   // console.log('Express server running..')
-//})
+    socket.on('disconnect', ()=>{
+        if(socket.user){
+            users.splice(users.indexOf(socket.user), 1)
+            io.emit("usersData", users)
+            console.log(`${socket.user} left the chat`)
+        }
+     })
+
+    })
+
+  
+
+
+
+app.listen(5000, ()=>{
+   console.log('Express server running..')
+})
 
 http.listen(process.env.PORT, ()=>{
     console.log(`Hello...from ${process.env.PORT}`)
