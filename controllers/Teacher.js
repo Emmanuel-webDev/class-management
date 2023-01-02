@@ -61,14 +61,18 @@ route.post('/login', async (req, res)=>{
    const existingUser = await user.findOne({email : email})
 
    const compare = await bcrypt.compare(password, existingUser.password)
-   if(!existingUser.email && !compare){
-    res.send('Creditentials Invalid')
+   if(!existingUser.email){
+    res.render('./ErrorMessages/403')
+    return
+   }
+   if(!compare){
+    res.render('./ErrorMessages/403')
     return
    }
 
 
    //authenticating users
-   const token = jwt.sign({id:existingUser._id, classOf:existingUser.classOf}, process.env.JWT_SECRET, {expiresIn: '3d'})
+   const token = jwt.sign({id:existingUser._id, classOf:existingUser.classOf}, process.env.JWT_SECRET, {expiresIn: '3hrs'})
    
    if(!token){
     return res.send('Token not registered')
@@ -104,6 +108,10 @@ const verification = async (req, res, next)=>{
 route.get('/dashboard', verification, async(req, res)=>{
   const profile = await user.findOne({_id: req.user})
   res.render('./Teacher/dashboard', {profiles : profile})
+})
+
+route.get('/chatRoom', async (req, res)=>{
+    res.render('./chatRoom/index')
 })
 
 route.get('/createMark', verification, (req, res)=>{

@@ -61,6 +61,9 @@ route.get('/notices', authorization, async(req, res)=>{
  res.render('./Student/Messages', {getMessage: getMessage})
 })
 
+route.get('/chatRoom', async (req, res)=>{
+    res.render('./chatRoom/index')
+})
 
 route.get('/studentMarks', authorization, async (req, res)=>{
 const result = await marks.aggregate([{

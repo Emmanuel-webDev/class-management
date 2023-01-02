@@ -31,11 +31,14 @@ app.set("views", "Frontend")
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
+app.use(express.static('public'))
 app.use(user)
 app.use(student)
 app.use((error, req, res, next)=>{
-    res.status(500).send("Server broke down..")
+    res.status(500).json(error.message)
+    next()
 })
+
    
 let users = []
 
@@ -70,11 +73,11 @@ io.on('connection', (socket)=>{
 
 
 
-app.listen(5000, ()=>{
-   console.log('Express server running..')
-})
+//app.listen(5000, ()=>{
+//console.log('Express server running..')
+//})
 
-http.listen(process.env.PORT, ()=>{
+http.listen(3000, ()=>{
     console.log(`Hello...from ${process.env.PORT}`)
 })
 
